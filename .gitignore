@@ -1,0 +1,29 @@
+# Build & compiled files
+*.o
+*.d
+*.out
+*.exe
+# Build directories
+bin/
+build/
+
+# Editor Files
+*.swp
+*~
+# VS Code workspace settings
+.vscode/
+
+#Vim
+*~
+*.swp
+*.tmp
+
+# Operating System Files
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+desktop.inip
+
+# Debugging & logs
+*.log
