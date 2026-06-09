@@ -34,6 +34,40 @@ void decode_instruction(uint32_t inst, DecodedInst_t *decoded) {
             decoded->imm    = EXTRACT_BITS(inst, 20, 31);
             decoded->imm    = sign_extend(decoded->imm, 12);
             break;
+
+        case OP_S_TYPE:
+            decoded->funct3 = EXTRACT_BITS(inst, 12, 14);
+            decoded->rs1    = EXTRACT_BITS(inst, 15, 19);
+            decoded->rs2    = EXTRACT_BITS(inst, 20, 24);
+            decoded->imm    = (EXTRACT_BITS(inst, 25, 31) << 5) | EXTRACT_BITS(inst, 7, 11);
+            decoded->imm    = sign_extend(decoded->imm, 12);
+            break;
+
+        case OP_B_TYPE:
+            decoded->funct3 = EXTRACT_BITS(inst, 12, 14);
+            decoded->rs1    = EXTRACT_BITS(inst, 15, 19);
+            decoded->rs2    = EXTRACT_BITS(inst, 20, 24);
+            decoded->imm    = (EXTRACT_BITS(inst, 31, 31) << 12) |
+                              (EXTRACT_BITS(inst, 7, 7)   << 11) |
+                              (EXTRACT_BITS(inst, 25, 30) << 5)  |
+                              (EXTRACT_BITS(inst, 8, 11)  << 1);
+            decoded->imm    = sign_extend(decoded->imm, 13);
+            break;
+
+        case OP_U_TYPE_LUI:
+        case OP_U_TYPE_AUIPC:
+            decoded->rd     = EXTRACT_BITS(inst, 7, 11);
+            decoded->imm    = EXTRACT_BITS(inst, 12, 31) << 12;
+            break;
+
+        case OP_J_TYPE_JAL:
+            decoded->rd     = EXTRACT_BITS(inst, 7, 11);
+            decoded->imm    = (EXTRACT_BITS(inst, 31, 31) << 20) |
+                              (EXTRACT_BITS(inst, 12, 19) << 12) |
+                              (EXTRACT_BITS(inst, 20, 20) << 11) |
+                              (EXTRACT_BITS(inst, 21, 30) << 1);
+            decoded->imm    = sign_extend(decoded->imm, 21);
+            break;
             
         default:
             decoded->opcode = OP_UNKNOWN;
