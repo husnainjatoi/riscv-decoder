@@ -4,7 +4,7 @@
 static int32_t sign_extend(int32_t value, int bit_count) {
     int32_t sign_bit = 1 << (bit_count - 1);
     if (value & sign_bit) {
-        value |= ((int32_t)0xFFFFFFFF << bit_count); 
+        value |= (int32_t)(0xFFFFFFFFU << bit_count); 
     }
     return value;
 }
