@@ -9,7 +9,7 @@ static int32_t sign_extend(int32_t value, int bit_count) {
     return value;
 }
 
-void decode_instruction(uint32_t inst, DecodedInst_t *decoded) {
+void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
     decoded->opcode = (opcode_t)EXTRACT_BITS(inst, 0, 6);
 
     decoded->rd = 0; decoded->rs1 = 0; decoded->rs2 = 0;
@@ -77,7 +77,7 @@ void decode_instruction(uint32_t inst, DecodedInst_t *decoded) {
     }
 }
 
-void print_assembly(uint32_t address, uint32_t inst, const DecodedInst_t *decoded) {
+void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decoded) {
     if (decoded->opcode == OP_UNKNOWN) {
         printf("0x%08x  %08X    UNKNOWN\n", address, inst);
         return;
