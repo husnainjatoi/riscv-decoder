@@ -17,6 +17,7 @@ uint32_t *load_hex_file(const char* filename, int *num_instructions){
     int capacity = INITIAL_CAPACITY;
     int count = 0;
 
+    // Allocate initial memory block for the instruction array.
     uint32_t *memory = (uint32_t*) malloc (capacity * sizeof(uint32_t));
 
     if(!memory){
@@ -28,18 +29,20 @@ uint32_t *load_hex_file(const char* filename, int *num_instructions){
 
     char line[MAX_LINE_CAPACITY];
     
+    // Read the file line by line until EOF.
     while(fgets(line, sizeof(line), file)){
+        // Skip empty lines to prevent processing errors.
         if(line[0] == '\n' || line[0] == '\r' || line[0] == '\0'){
             continue;
         }
 
+        // Double the memory capacity if we run out of room.
         if(count >= capacity){
-
             capacity *= 2;
             uint32_t *temp = (uint32_t *)realloc(memory, capacity * sizeof(uint32_t));
             if(!temp){
                 fprintf(stderr, "Error: Memory allocation failed at instruction %d\n", count);
-                free(memory);
+                free(memory); // Free existing memory to prevent leaks on failure.
                 fclose(file);
                 *num_instructions = 0;
                 return NULL;
@@ -47,9 +50,9 @@ uint32_t *load_hex_file(const char* filename, int *num_instructions){
             memory = temp;
         }
 
+    // Convert hex string to integer and store in the instruction array.
     memory[count] = (uint32_t) strtoul (line, NULL, 16);
     count ++;
-
     }
 
     fclose(file);

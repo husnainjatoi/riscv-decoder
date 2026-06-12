@@ -1,17 +1,22 @@
 #include <stdio.h>
 #include "../include/decoder.h"
 
+// Safely extends a smaller bit-field into a 32-bit signed integer.
+// Uses a sign-bit mask to detect negatives and pads with 1s to preserve the value.
 static int32_t sign_extend(int32_t value, int bit_count) {
     int32_t sign_bit = 1 << (bit_count - 1);
     if (value & sign_bit) {
+        // Pad the upper unused bits with 1s if the sign bit is set.
         value |= (int32_t)(0xFFFFFFFFU << bit_count); 
     }
     return value;
 }
 
 void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
+    // Opcode is always in the lowest 7 bits of the instruction.
     decoded->opcode = (opcode_t)EXTRACT_BITS(inst, 0, 6);
 
+    // Reset fields to ensure no junk data carries over between decodes.
     decoded->rd = 0; decoded->rs1 = 0; decoded->rs2 = 0;
     decoded->funct3 = 0; decoded->funct7 = 0; decoded->imm = 0;
 
@@ -31,6 +36,7 @@ void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
             decoded->funct3 = EXTRACT_BITS(inst, 12, 14);
             decoded->rs1    = EXTRACT_BITS(inst, 15, 19);
             
+            // I-Type immediates are a contiguous 12-bit block.
             decoded->imm    = EXTRACT_BITS(inst, 20, 31);
             decoded->imm    = sign_extend(decoded->imm, 12);
             
@@ -41,6 +47,7 @@ void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
             decoded->funct3 = EXTRACT_BITS(inst, 12, 14);
             decoded->rs1    = EXTRACT_BITS(inst, 15, 19);
             decoded->rs2    = EXTRACT_BITS(inst, 20, 24);
+            // S-Type immediates are split across two fields; reassemble them here.
             decoded->imm    = (EXTRACT_BITS(inst, 25, 31) << 5) | EXTRACT_BITS(inst, 7, 11);
             decoded->imm    = sign_extend(decoded->imm, 12);
             break;
@@ -49,6 +56,7 @@ void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
             decoded->funct3 = EXTRACT_BITS(inst, 12, 14);
             decoded->rs1    = EXTRACT_BITS(inst, 15, 19);
             decoded->rs2    = EXTRACT_BITS(inst, 20, 24);
+            // B-Type scrambles immediate bits; reorder them to reconstruct the branch offset.
             decoded->imm    = (EXTRACT_BITS(inst, 31, 31) << 12) |
                               (EXTRACT_BITS(inst, 7, 7)   << 11) |
                               (EXTRACT_BITS(inst, 25, 30) << 5)  |
@@ -59,11 +67,13 @@ void decode_instruction(uint32_t inst, decodedinst_t *decoded) {
         case OP_U_TYPE_LUI:
         case OP_U_TYPE_AUIPC:
             decoded->rd     = EXTRACT_BITS(inst, 7, 11);
+            // U-Type immediates are shifted left to the upper 20 bits.
             decoded->imm    = EXTRACT_BITS(inst, 12, 31) << 12;
             break;
 
         case OP_J_TYPE_JAL:
             decoded->rd     = EXTRACT_BITS(inst, 7, 11);
+            // J-Type uses a complex scrambled format; reassemble in correct bit order.
             decoded->imm    = (EXTRACT_BITS(inst, 31, 31) << 20) |
                               (EXTRACT_BITS(inst, 12, 19) << 12) |
                               (EXTRACT_BITS(inst, 20, 20) << 11) |

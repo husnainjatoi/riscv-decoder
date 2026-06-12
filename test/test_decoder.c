@@ -2,10 +2,12 @@
 #include <assert.h>
 #include "../include/decoder.h"
 
+// ANSI color codes for clear terminal test reporting.
 #define GRN "\e[0;32m"
 #define RED "\e[0;31m"
 #define RST "\e[0m"
 
+// Validates basic R-Type decoding (ADD instruction).
 void test_r_type_decode() {
     decodedinst_t decoded;
     decode_instruction(0x003100B3, &decoded);
@@ -19,6 +21,7 @@ void test_r_type_decode() {
     printf(GRN "PASS" RST ": test_r_type_decode (add)\n");
 }
 
+// Validates sign-extension logic for I-Type negative constants.
 void test_i_type_negative_immediate() {
     decodedinst_t decoded;
     decode_instruction(0xFFF10113, &decoded);
@@ -31,6 +34,7 @@ void test_i_type_negative_immediate() {
     printf(GRN "PASS" RST ": test_i_type_negative_immediate (addi)\n");
 }
 
+// Verifies that scrambled B-Type immediate bits are correctly reassembled.
 void test_b_type_scrambled_immediate() {
     decodedinst_t decoded;
     decode_instruction(0xFE209CE3, &decoded);
@@ -43,6 +47,7 @@ void test_b_type_scrambled_immediate() {
     printf(GRN "PASS" RST ": test_b_type_scrambled_immediate (bne)\n");
 }
 
+// Checks that S-Type stores correctly handle negative memory offsets.
 void test_s_type_negative_offset() {
     decodedinst_t decoded;
     decode_instruction(0xFE321F23, &decoded);
@@ -55,6 +60,7 @@ void test_s_type_negative_offset() {
     printf(GRN "PASS" RST ": test_s_type_negative_offset (sh)\n");
 }
 
+// Ensures U-Type immediates are correctly shifted to the upper 20 bits.
 void test_u_type_upper_immediate() {
     decodedinst_t decoded;
     decode_instruction(0x123452B7, &decoded);
@@ -65,6 +71,7 @@ void test_u_type_upper_immediate() {
     printf(GRN "PASS" RST ": test_u_type_upper_immediate (lui)\n");
 }
 
+// Tests J-Type reassembly and correct handling of negative jumps.
 void test_j_type_scrambled_negative_jump() {
     decodedinst_t decoded;
     decode_instruction(0xFFDFF06F, &decoded);
@@ -79,6 +86,7 @@ int main() {
     printf("Starting Decoder SQA Unit Tests...\n");
     printf("------------------------------------\n");
     
+    // Execute full suite of SQA tests.
     test_r_type_decode();
     test_i_type_negative_immediate();
     test_b_type_scrambled_immediate();

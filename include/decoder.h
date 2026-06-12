@@ -23,7 +23,7 @@ typedef struct {
     uint8_t rs2;
     uint8_t funct3;
     uint8_t funct7;
-    int32_t imm;
+    int32_t imm; // Stores immediate values as signed 32-bit integers
 } decodedinst_t;
 
 void decode_instruction(uint32_t instr, decodedinst_t *decoded);
