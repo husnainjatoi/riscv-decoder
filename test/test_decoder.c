@@ -43,6 +43,38 @@ void test_b_type_scrambled_immediate() {
     printf(GRN "PASS" RST ": test_b_type_scrambled_immediate (bne)\n");
 }
 
+void test_s_type_negative_offset() {
+    decodedinst_t decoded;
+    decode_instruction(0xFE321F23, &decoded);
+    
+    assert(decoded.opcode == OP_S_TYPE);
+    assert(decoded.rs1 == 4);
+    assert(decoded.rs2 == 3);
+    assert(decoded.funct3 == 0x1);
+    assert(decoded.imm == -2);
+    printf(GRN "PASS" RST ": test_s_type_negative_offset (sh)\n");
+}
+
+void test_u_type_upper_immediate() {
+    decodedinst_t decoded;
+    decode_instruction(0x123452B7, &decoded);
+    
+    assert(decoded.opcode == OP_U_TYPE_LUI);
+    assert(decoded.rd == 5);
+    assert(decoded.imm == 0x12345000);
+    printf(GRN "PASS" RST ": test_u_type_upper_immediate (lui)\n");
+}
+
+void test_j_type_scrambled_negative_jump() {
+    decodedinst_t decoded;
+    decode_instruction(0xFFDFF06F, &decoded);
+    
+    assert(decoded.opcode == OP_J_TYPE_JAL);
+    assert(decoded.rd == 0);
+    assert(decoded.imm == -4);
+    printf(GRN "PASS" RST ": test_j_type_scrambled_negative_jump (jal)\n");
+}
+
 int main() {
     printf("Starting Decoder SQA Unit Tests...\n");
     printf("------------------------------------\n");
@@ -50,6 +82,9 @@ int main() {
     test_r_type_decode();
     test_i_type_negative_immediate();
     test_b_type_scrambled_immediate();
+    test_s_type_negative_offset();
+    test_u_type_upper_immediate();
+    test_j_type_scrambled_negative_jump();
     
     printf("------------------------------------\n");
     printf(GRN "ALL SQA TESTS PASSED SUCCESSFULLY.\n" RST);
