@@ -24,9 +24,11 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    printf("RISC-V RV32I Instruction Decoder\n");
-    printf("Loaded %d instructions from %s\n", num_instructions, filename);
-    printf("%-10s  %-10s  %s\n", "Addr", "Hex", "Assembly");
+    printf("\nRISC-V RV32I Instruction Decoder\n");
+    printf("========================================================\n\n"); 
+    printf("Loaded %d instructions from %s\n\n", num_instructions, filename);
+    
+    printf("%-11s     %-11s %s\n", "Addr", "Hex", "Assembly");
     printf("--------------------------------------------------------\n"); 
 
     int valid_count = 0;
@@ -34,12 +36,10 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < num_instructions; i++) {
         uint32_t current_inst = memory[i];
-        
         uint32_t current_address = i * 4; 
 
         decodedinst_t decoded;
         decode_instruction(current_inst, &decoded);
-        
         print_assembly(current_address, current_inst, &decoded);
 
         if (decoded.opcode == OP_UNKNOWN) {
@@ -49,8 +49,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("--------------------------------------------------------\n");
-    printf("Decoded %d instructions (%d valid, %d unknown)\n", num_instructions, valid_count, unknown_count);
+    printf("\nDecoded %d instructions (%d valid, %d unknown)\n", num_instructions, valid_count, unknown_count);
 
     free(memory);
 

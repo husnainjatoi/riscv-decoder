@@ -98,7 +98,7 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
                 case 0x6: mnemonic = "or"; break;
                 case 0x7: mnemonic = "and"; break;
             }
-            sprintf(assembly_str, "%-7s x%d, x%d, x%d", mnemonic, decoded->rd, decoded->rs1, decoded->rs2);
+            sprintf(assembly_str, "%-5s x%d, x%d, x%d", mnemonic, decoded->rd, decoded->rs1, decoded->rs2);
             break;
 
         case OP_I_TYPE_ARITH:
@@ -113,9 +113,9 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
                 case 0x7: mnemonic = "andi"; break;
             }
             if (decoded->funct3 == 0x1 || decoded->funct3 == 0x5) {
-                sprintf(assembly_str, "%-7s x%d, x%d, %d", mnemonic, decoded->rd, decoded->rs1, decoded->imm & 0x1F);
+                sprintf(assembly_str, "%-5s x%d, x%d, %d", mnemonic, decoded->rd, decoded->rs1, decoded->imm & 0x1F);
             } else {
-                sprintf(assembly_str, "%-7s x%d, x%d, %d", mnemonic, decoded->rd, decoded->rs1, decoded->imm);
+                sprintf(assembly_str, "%-5s x%d, x%d, %d", mnemonic, decoded->rd, decoded->rs1, decoded->imm);
             }
             break;
 
@@ -127,7 +127,7 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
                 case 0x4: mnemonic = "lbu"; break;
                 case 0x5: mnemonic = "lhu"; break;
             }
-            sprintf(assembly_str, "%-7s x%d, %d(x%d)", mnemonic, decoded->rd, decoded->imm, decoded->rs1);
+            sprintf(assembly_str, "%-5s x%d, %d(x%d)", mnemonic, decoded->rd, decoded->imm, decoded->rs1);
             break;
 
         case OP_S_TYPE:
@@ -136,7 +136,7 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
                 case 0x1: mnemonic = "sh"; break;
                 case 0x2: mnemonic = "sw"; break;
             }
-            sprintf(assembly_str, "%-7s x%d, %d(x%d)", mnemonic, decoded->rs2, decoded->imm, decoded->rs1);
+            sprintf(assembly_str, "%-5s x%d, %d(x%d)", mnemonic, decoded->rs2, decoded->imm, decoded->rs1);
             break;
 
         case OP_B_TYPE:
@@ -148,23 +148,23 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
                 case 0x6: mnemonic = "bltu"; break;
                 case 0x7: mnemonic = "bgeu"; break;
             }
-            sprintf(assembly_str, "%-7s x%d, x%d, %d", mnemonic, decoded->rs1, decoded->rs2, decoded->imm);
+            sprintf(assembly_str, "%-5s x%d, x%d, %d", mnemonic, decoded->rs1, decoded->rs2, decoded->imm);
             break;
 
         case OP_U_TYPE_LUI:
-            sprintf(assembly_str, "%-7s x%d, 0x%X", "lui", decoded->rd, (decoded->imm >> 12));
+            sprintf(assembly_str, "%-5s x%d, 0x%X", "lui", decoded->rd, (decoded->imm >> 12));
             break;
 
         case OP_U_TYPE_AUIPC:
-            sprintf(assembly_str, "%-7s x%d, 0x%X", "auipc", decoded->rd, (decoded->imm >> 12));
+            sprintf(assembly_str, "%-5s x%d, 0x%X", "auipc", decoded->rd, (decoded->imm >> 12));
             break;
 
         case OP_J_TYPE_JAL:
-            sprintf(assembly_str, "%-7s x%d, %d", "jal", decoded->rd, decoded->imm);
+            sprintf(assembly_str, "%-5s x%d, %d", "jal", decoded->rd, decoded->imm);
             break;
 
         case OP_I_TYPE_JALR:
-            sprintf(assembly_str, "%-7s x%d, %d(x%d)", "jalr", decoded->rd, decoded->imm, decoded->rs1);
+            sprintf(assembly_str, "%-5s x%d, %d(x%d)", "jalr", decoded->rd, decoded->imm, decoded->rs1);
             break;
 
         default:
@@ -172,5 +172,5 @@ void print_assembly(uint32_t address, uint32_t inst, const decodedinst_t *decode
             break;
     }
 
-    printf("0x%08x  %08X    %s\n", address, inst, assembly_str);
+    printf("0x%08X    %08X    %s\n", address, inst, assembly_str);
 }
