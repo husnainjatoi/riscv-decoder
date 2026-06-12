@@ -32,6 +32,13 @@ test: $(TEST_DIR)/test_decoder.c $(SRC_DIR)/decoder.c
 	@echo "Executing automated SQA unit tests..."
 	./$(TEST_TARGET)
 
+FILE ?= test/programs/mixed.hex
+
+run: all
+	@echo "Executing decoder on $(FILE)..."
+	@echo "--------------------------------------------------------"
+	@./$(TARGET) $(FILE)
+
 valgrind: all
 	@echo "Initiating dynamic memory leak analysis..."
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET) test/programs/mixed.hex
@@ -42,6 +49,8 @@ clean:
 
 help:
 	@echo "========================================================================"
+	@echo " RISC-V RV32I Instruction Decoder Automation Layer Help"
+	@echo "========================================================================"
 	@echo " Available commands:"
 	@echo "  make             Compile and build the production binary (default)"
 	@echo "  make debug       Build executable with disabled compiler optimizations (-O0)"
@@ -49,6 +58,8 @@ help:
 	@echo "  make valgrind    Compile code and run memory leak diagnostic check"
 	@echo "  make clean       Purge all compiled binaries, objects, and build folders"
 	@echo "  make help        Display this interactive documentation summary"
+	@echo "  make run         Compile and execute the decoder (defaults to mixed.hex)"
+	@echo "                   Usage: make run [FILE=path/to/custom.hex]"	
 	@echo "========================================================================"
 
-.PHONY: all clean test debug valgrind help
+.PHONY: all clean test debug valgrind help run
